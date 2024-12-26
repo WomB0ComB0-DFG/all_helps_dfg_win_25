@@ -1,8 +1,8 @@
-import 'package:allhelps/filter_model.dart';
-import 'package:allhelps/search_model.dart';
+import 'package:allhelps/widgets/filter_model.dart';
+import 'package:allhelps/widgets/search_model.dart';
 import 'package:flutter/material.dart';
 
-import 'search_bar_page.dart';
+import '../screens/search_bar_page.dart';
 
 class Filters extends StatefulWidget {
   final Function closeSearch;

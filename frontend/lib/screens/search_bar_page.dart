@@ -1,5 +1,5 @@
-import 'package:allhelps/filter_model.dart';
-import 'package:allhelps/search_model.dart';
+import 'package:allhelps/widgets/filter_model.dart';
+import 'package:allhelps/widgets/search_model.dart';
 import 'package:flutter/material.dart';
 
 class SearchBarWidget extends StatefulWidget {

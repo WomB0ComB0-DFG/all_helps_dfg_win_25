@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:allhelps/alert_base_class.dart';
-import 'package:allhelps/filter_model.dart';
-import 'package:allhelps/search_model.dart';
-import 'package:allhelps/locations.dart';
-import 'package:allhelps/search_bar_page.dart';
-import 'package:allhelps/search_options.dart';
+import 'package:allhelps/classes/alert_base_class.dart';
+import 'package:allhelps/widgets/filter_model.dart';
+import 'package:allhelps/widgets/search_model.dart';
+import 'package:allhelps/models/locations.dart';
+import 'package:allhelps/screens/search_bar_page.dart';
+import 'package:allhelps/widgets/search_options.dart';
 
 class MyHomePage extends StatefulWidget {
   final Function(int, {String? filter}) onIndexChanged;

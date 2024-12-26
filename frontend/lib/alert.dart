@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'alert_base_class.dart';
+import 'classes/alert_base_class.dart';
 
 class CustomIconButton extends StatelessWidget {
   final IconData icon;

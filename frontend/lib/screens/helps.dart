@@ -1,13 +1,13 @@
-import 'package:allhelps/filter_model.dart';
-import 'package:allhelps/help_page_filters.dart';
-import 'package:allhelps/search_model.dart';
-import 'package:allhelps/search_options.dart';
+import 'package:allhelps/widgets/filter_model.dart';
+import 'package:allhelps/widgets/help_page_filters.dart';
+import 'package:allhelps/widgets/search_model.dart';
+import 'package:allhelps/widgets/search_options.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
-import 'locations.dart';
+import '../models/locations.dart';
 
 class HelpsPage extends StatefulWidget {
   HelpsPage({super.key});

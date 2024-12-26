@@ -1,8 +1,8 @@
-import 'package:allhelps/filter_model.dart';
+import 'package:allhelps/widgets/filter_model.dart';
 import 'package:flutter/material.dart';
 import 'package:allhelps/alert.dart';
-import 'package:allhelps/helps.dart';
-import 'package:allhelps/home.dart';
+import 'package:allhelps/screens/helps.dart';
+import 'package:allhelps/screens/home.dart';
 
 void main() {
   runApp(MyApp());

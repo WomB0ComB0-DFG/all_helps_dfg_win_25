@@ -1,4 +1,4 @@
-import 'package:allhelps/locations.dart';
+import 'package:allhelps/models/locations.dart';
 import 'package:latlong2/latlong.dart' as lat_lng;
 
 class SearchModel {
