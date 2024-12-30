@@ -1,105 +1,81 @@
-import 'package:all_helps_dfg_win_25/models/models.dart';
+import 'package:dart_frog/dart_frog.dart';
 import 'package:all_helps_dfg_win_25/services/firebase_service.dart';
-import 'package:firebase_dart/firebase_dart.dart';
+import 'package:all_helps_dfg_win_25/repositories/search_repository.dart';
 
-/// Repository class that handles search functionality against Firebase Realtime Database.
-///
-/// This class provides methods to search through indexed content in Firebase, with support for:
-/// - Text-based searching across titles and descriptions
-/// - Optional category filtering
-/// - Configurable result limits
-///
-/// Example usage:
-/// ```dart
-/// final searchRepo = SearchRepository(firebaseService);
-/// final results = await searchRepo.search(
-///   query: 'example',
-///   category: 'articles',
-///   limit: 5
-/// );
-/// ```
-class SearchRepository {
-  /// Creates a new [SearchRepository] instance.
-  ///
-  /// Parameters:
-  ///   - firebaseService: Instance of [FirebaseService] for database access
-  SearchRepository(this._firebaseService);
+Future<Response> onRequest(RequestContext context) async {
+  switch (context.request.method) {
+    case HttpMethod.get:
+      try {
+        final uri = context.request.uri;
+        final queryParams = uri.queryParameters;
 
-  final FirebaseService _firebaseService;
+        // Extract search parameters
+        final searchQuery = queryParams['q'];
+        final category = queryParams['category'];
+        final limit = int.tryParse(queryParams['limit'] ?? '10');
 
-  /// Gets a reference to the SearchIndex node in Firebase Realtime Database.
-  DatabaseReference get _searchRef =>
-      _firebaseService.realtimeDatabase.reference().child('SearchIndex');
+        // Validate required parameters
+        if (searchQuery == null || searchQuery.isEmpty) {
+          return Response.json(
+            statusCode: 400,
+            body: {'error': 'Search query is required'},
+          );
+        }
 
-  /// Searches for items matching the given criteria.
-  ///
-  /// Parameters:
-  ///   - query: Search text to match against titles and descriptions
-  ///   - category: Optional category to filter results
-  ///   - limit: Maximum number of results to return (default: 10)
-  ///
-  /// Returns:
-  ///   List of [SearchResult] objects matching the search criteria
-  ///
-  /// Throws:
-  ///   Any Firebase exceptions that occur during the operation
-  Future<List<SearchResult>> search({
-    required String query,
-    String? category,
-    int limit = 10,
-  }) async {
-    try {
-      Query searchQuery = _searchRef;
+        // Get Firebase service from context
+        final firebaseService = await context.read<Future<FirebaseService>>();
+        final searchRepo = SearchRepository(firebaseService);
 
-      // If category is provided, filter by it
-      if (category != null) {
-        searchQuery = searchQuery.orderByChild('category').equalTo(category);
-      }
-
-      // Get the snapshot
-      final snapshot = await searchQuery.get();
-
-      if (snapshot.value == null) {
-        return [];
-      }
-
-      // Convert to List<SearchResult>
-      final results = <SearchResult>[];
-      final data = Map<String, dynamic>.from(snapshot.value as Map);
-
-      for (final item in data.values) {
-        final searchResult = SearchResult.fromJson(
-          Map<String, dynamic>.from(item as Map),
+        // Perform search
+        final results = await searchRepo.search(
+          query: searchQuery,
+          category: category,
+          limit: limit ?? 10,
         );
 
-        // Apply text search filter
-        if (_matchesSearch(searchResult, query)) {
-          results.add(searchResult);
-        }
-
-        // Apply limit
-        if (results.length >= limit) {
-          break;
-        }
+        // Return results
+        return Response.json(
+          body: {
+            'status': 'success',
+            'results': results.map((r) => r.toJson()).toList(),
+            'count': results.length,
+          },
+        );
+      } catch (e) {
+        return Response.json(
+          statusCode: 500,
+          body: {
+            'status': 'error',
+            'message': 'Internal server error',
+            'error': e.toString(),
+          },
+        );
       }
-
-      return results;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  /// Checks if a search result matches the search query.
-  ///
-  /// Parameters:
-  ///   - result: The [SearchResult] to check
-  ///   - query: The search text to match against
-  ///
-  /// Returns:
-  ///   true if the result matches the query, false otherwise
-  bool _matchesSearch(SearchResult result, String query) {
-    final searchLower = query.toLowerCase();
-    return result.title.toLowerCase().contains(searchLower) ||
-        result.description.toLowerCase().contains(searchLower);
+    case HttpMethod.head:
+      return Response.json(
+        statusCode: 200,
+        body: {
+          'status': 'success',
+          'message': 'Search index is ready',
+        },
+      );
+    case HttpMethod.options:
+      return Response.json(
+        body: {
+          'status': 'success',
+          'message': "GET, HEAD, OPTIONS"
+        }
+      );
+    case HttpMethod.post:
+    case HttpMethod.put:
+    case HttpMethod.delete:
+    case HttpMethod.patch:
+      return Response.json(
+        statusCode: 405,
+        body: {
+          'status': 'error',
+          'message': 'Method not allowed',
+        },
+      );
   }
 }

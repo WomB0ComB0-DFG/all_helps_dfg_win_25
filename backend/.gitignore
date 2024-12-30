@@ -19,7 +19,7 @@ doc/api/
 coverage/
 
 # dotenv environment variables file
-.env*
+.env
 
 # Firebase credentials
 firebase-credentials.json
